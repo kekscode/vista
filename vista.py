@@ -8,7 +8,7 @@ import json
 import requests
 from urlparse import urljoin
 
-logging.basicConfig(level=logging.ERROR, format="%(asctime)s;%(levelname)s;%(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s;%(levelname)s;%(message)s")
 logger = logging.getLogger(sys.argv[0])
 
 class CheckvistUserAccount:
@@ -24,6 +24,15 @@ class CheckvistUserAccount:
         if r.status_code == 200:
            self.api_token = r.text.replace('"', '').strip()
            return True
+        else:
+            logger.error(r.content)
+            return False
+
+    def get_checklists(self):
+        get_params = {'token': self.api_token }
+        r = requests.get(urljoin(self.base_url, '/checklists.json'), params=get_params)
+        if r.status_code == 200:
+            return r.content
         else:
             logger.error(r.content)
             return False
@@ -44,6 +53,8 @@ def main():
     cv = CheckvistUserAccount(username, remote_key)
     if not cv.authenticate():
         logger.error("Could not authenticate with checkvist.com")
+
+    logger.info(cv.get_checklists())
 
 if __name__ == '__main__':
     main()
