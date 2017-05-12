@@ -38,7 +38,7 @@ def main():
         else:
             logger.error("Either {0} or {1} environment variable is empty".format(user, key))
             sys.exit(1)
-        return user, key
+        return username, remote_key
 
     username, remote_key = get_env()
     cv = CheckvistUserAccount(username, remote_key)
